@@ -1,5 +1,6 @@
 package com.cesde.farmaciagrupo2.model.base;
  
+import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,4 +28,7 @@ public abstract class BaseEntity {
     private LocalDateTime fechaCreacion;
  
     private LocalDateTime fechaActualizacion;
+    
+    @Column(nullable = false)
+    private Boolean estadoActivo;
 }
