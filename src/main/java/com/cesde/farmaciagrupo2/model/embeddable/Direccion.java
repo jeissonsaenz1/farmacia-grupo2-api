@@ -1,4 +1,4 @@
-package com.cesde.farmacia_grupo2.model.embeddable;
+package com.cesde.farmaciagrupo2.model.embeddable;
  
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;

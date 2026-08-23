@@ -1,6 +1,6 @@
-package com.cesde.farmacia_grupo2.model.entity;
+package com.cesde.farmaciagrupo2.model.entity;
 
-import com.cesde.farmacia_grupo2.model.base.BaseEntity;
+import com.cesde.farmaciagrupo2.model.base.BaseEntity;
  
 import jakarta.persistence.Column;
 

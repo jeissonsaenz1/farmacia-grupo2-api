@@ -1,8 +1,5 @@
-package com.cesde.farmacia_grupo2.model.entity;
+package com.cesde.farmaciagrupo2.model.entity;
 
-import com.cesde.farmacia_grupo2.model.base.BaseEntity;
-
-import com.cesde.farmacia_grupo2.model.enums.EstadoVenta;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
@@ -15,6 +12,9 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
  
 import java.util.List;
+
+import com.cesde.farmaciagrupo2.model.base.BaseEntity;
+import com.cesde.farmaciagrupo2.model.enums.EstadoVenta;
  
 @Entity
 @Getter

@@ -1,4 +1,4 @@
-package com.cesde.farmacia_grupo2.model.base;
+package com.cesde.farmaciagrupo2.model.base;
  
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
