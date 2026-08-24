@@ -1,4 +1,4 @@
-package com.cesde.farmacia_grupo2.model.enums;
+package com.cesde.farmaciagrupo2.model.enums;
  
 public enum EstadoVenta {
     PENDIENTE,
