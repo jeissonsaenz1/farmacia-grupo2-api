@@ -24,8 +24,8 @@ import com.cesde.farmaciagrupo2.model.enums.EstadoVenta;
 @SuperBuilder
 public class Venta extends BaseEntity {
  
-    @Column(nullable = false)
-    private Double total;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private Double total;  
  
     @Enumerated(EnumType.STRING)
     private EstadoVenta estado;
