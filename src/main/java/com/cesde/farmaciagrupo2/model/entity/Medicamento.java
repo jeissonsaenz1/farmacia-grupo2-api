@@ -44,7 +44,7 @@ public class Medicamento extends BaseEntity {
 
     private String nombre;
  
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 10, scale = 2)
 
     private Double precio;
  
