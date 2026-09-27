@@ -2,7 +2,10 @@ package com.cesde.farmaciagrupo2.service;
 
 import com.cesde.farmaciagrupo2.model.entity.Medicamento;
 import com.cesde.farmaciagrupo2.repository.MedicamentoRepository;
+
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +24,7 @@ public class MedicamentoService {
         // Regla de negocio 1:
         // El precio debe ser mayor que cero.
         if (medicamento.getPrecio() == null || medicamento.getPrecio() <= 0) {
-            throw new IllegalArgumentException(
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "El precio del medicamento debe ser mayor que cero.");
         }
 

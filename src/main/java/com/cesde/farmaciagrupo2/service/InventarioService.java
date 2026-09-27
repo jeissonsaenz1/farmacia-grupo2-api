@@ -2,7 +2,10 @@ package com.cesde.farmaciagrupo2.service;
 
 import com.cesde.farmaciagrupo2.model.entity.Inventario;
 import com.cesde.farmaciagrupo2.repository.InventarioRepository;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -29,7 +32,7 @@ public class InventarioService {
     private void validarStock(Inventario inventario) {
 
         if (inventario.getStock() < 0) {
-            throw new IllegalArgumentException(
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "El stock del inventario no puede ser negativo.");
         }
     }
@@ -44,7 +47,7 @@ public class InventarioService {
         }
 
         if (inventario.getFechaVencimiento().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException(
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "No se puede registrar un medicamento vencido.");
         }
     }
