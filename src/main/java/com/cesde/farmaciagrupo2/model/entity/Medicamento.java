@@ -41,11 +41,9 @@ import java.util.Set;
 public class Medicamento extends BaseEntity {
  
     @Column(nullable = false, length = 100)
-
     private String nombre;
- 
-    @Column(nullable = false, precision = 10, scale = 2)
 
+    @Column(nullable = false)
     private Double precio;
  
     @ManyToOne
