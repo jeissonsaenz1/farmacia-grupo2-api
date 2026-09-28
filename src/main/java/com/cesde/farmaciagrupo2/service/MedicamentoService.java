@@ -23,12 +23,13 @@ public class MedicamentoService {
 
         // Regla de negocio 1:
         // El precio debe ser mayor que cero.
-        if (medicamento.getPrecio() == null || medicamento.getPrecio() <= 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "El precio del medicamento debe ser mayor que cero.");
-        }
+        validarPrecio(medicamento);
 
         return medicamentoRepository.save(medicamento);
+    }
+
+    public List<Medicamento> listar() {
+        return medicamentoRepository.findAll();
     }
 
     public Optional<Medicamento> buscarPorId(Long id) {
@@ -50,5 +51,45 @@ public class MedicamentoService {
         return medicamentoRepository.findByPrecioBetween(
                 precioMinimo,
                 precioMaximo);
+    }
+
+    public Medicamento actualizar(Long id, Medicamento medicamento) {
+
+        Medicamento medicamentoExistente = medicamentoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Medicamento no encontrado."
+                ));
+
+        // Se mantiene la regla de negocio del precio
+        validarPrecio(medicamento);
+
+        medicamentoExistente.setNombre(medicamento.getNombre());
+        medicamentoExistente.setPrecio(medicamento.getPrecio());
+        medicamentoExistente.setLaboratorio(medicamento.getLaboratorio());
+
+        return medicamentoRepository.save(medicamentoExistente);
+    }
+
+    public void eliminar(Long id) {
+
+        if (!medicamentoRepository.existsById(id)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Medicamento no encontrado."
+            );
+        }
+
+        medicamentoRepository.deleteById(id);
+    }
+
+    private void validarPrecio(Medicamento medicamento) {
+
+        if (medicamento.getPrecio() == null || medicamento.getPrecio() <= 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "El precio del medicamento debe ser mayor que cero."
+            );
+        }
     }
 }

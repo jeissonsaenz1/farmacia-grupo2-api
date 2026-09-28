@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,13 +28,60 @@ public class InventarioService {
         return inventarioRepository.save(inventario);
     }
 
+    public List<Inventario> listar() {
+        return inventarioRepository.findAll();
+    }
+
+    public Optional<Inventario> buscarPorId(Long id) {
+        return inventarioRepository.findById(id);
+    }
+
+    public Optional<Inventario> buscarPorMedicamento(Long medicamentoId) {
+        return inventarioRepository.findByMedicamentoId(medicamentoId);
+    }
+
+    public Inventario actualizar(Long id, Inventario inventario) {
+
+        Inventario inventarioExistente = inventarioRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Inventario no encontrado."
+                ));
+
+        validarStock(inventario);
+        validarFechaVencimiento(inventario);
+
+        inventarioExistente.setStock(inventario.getStock());
+        inventarioExistente.setLote(inventario.getLote());
+        inventarioExistente.setFechaVencimiento(
+                inventario.getFechaVencimiento()
+        );
+        inventarioExistente.setMedicamento(inventario.getMedicamento());
+
+        return inventarioRepository.save(inventarioExistente);
+    }
+
+    public void eliminar(Long id) {
+
+        if (!inventarioRepository.existsById(id)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Inventario no encontrado."
+            );
+        }
+
+        inventarioRepository.deleteById(id);
+    }
+
     // Regla de negocio 2:
     // El stock no puede ser negativo.
     private void validarStock(Inventario inventario) {
 
         if (inventario.getStock() < 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "El stock del inventario no puede ser negativo.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "El stock del inventario no puede ser negativo."
+            );
         }
     }
 
@@ -42,17 +90,17 @@ public class InventarioService {
     private void validarFechaVencimiento(Inventario inventario) {
 
         if (inventario.getFechaVencimiento() == null) {
-            throw new IllegalArgumentException(
-                    "La fecha de vencimiento es obligatoria.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "La fecha de vencimiento es obligatoria."
+            );
         }
 
         if (inventario.getFechaVencimiento().isBefore(LocalDate.now())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "No se puede registrar un medicamento vencido.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "No se puede registrar un medicamento vencido."
+            );
         }
-    }
-
-    public Optional<Inventario> buscarPorMedicamento(Long medicamentoId) {
-        return inventarioRepository.findByMedicamentoId(medicamentoId);
     }
 }
