@@ -10,12 +10,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
- 
+
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.cesde.farmaciagrupo2.model.base.BaseEntity;
 import com.cesde.farmaciagrupo2.model.enums.EstadoVenta;
- 
+
 @Entity
 @Getter
 @Setter
@@ -23,13 +24,13 @@ import com.cesde.farmaciagrupo2.model.enums.EstadoVenta;
 @AllArgsConstructor
 @SuperBuilder
 public class Venta extends BaseEntity {
- 
+
     @Column(nullable = false, precision = 10, scale = 2)
-    private Double total;  
- 
+    private BigDecimal total;
+
     @Enumerated(EnumType.STRING)
     private EstadoVenta estado;
- 
+
     @OneToMany(mappedBy = "venta")
     private List<DetalleVenta> detalles;
 }
