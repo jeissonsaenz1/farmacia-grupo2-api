@@ -25,6 +25,8 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
  
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
  
 @Entity
 
@@ -52,12 +54,13 @@ public class Medicamento extends BaseEntity {
 
     private Laboratorio laboratorio;
  
-    @ManyToMany(mappedBy = "medicamentos")
 
+    @JsonIgnore
+    @ManyToMany(mappedBy = "medicamentos")
     private Set<Formula> formulas;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "medicamento")
-    
     private Inventario inventario;
 
 }

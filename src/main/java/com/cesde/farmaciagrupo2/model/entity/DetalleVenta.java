@@ -20,6 +20,9 @@ import lombok.Setter;
 
 import lombok.experimental.SuperBuilder;
  
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
 @Entity
 
 @Getter
@@ -42,10 +45,9 @@ public class DetalleVenta extends BaseEntity {
 
     private Double subtotal;
  
+    @JsonIgnore
     @ManyToOne
-
     @JoinColumn(name = "venta_id")
-
     private Venta venta;
  
     @ManyToOne
