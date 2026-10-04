@@ -1,28 +1,18 @@
 package com.cesde.farmaciagrupo2.model.entity;
 
 import com.cesde.farmaciagrupo2.model.base.BaseEntity;
- 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
-
 import jakarta.persistence.Entity;
-
 import jakarta.persistence.JoinColumn;
-
 import jakarta.persistence.ManyToOne;
-
 import lombok.AllArgsConstructor;
-
 import lombok.Getter;
-
 import lombok.NoArgsConstructor;
-
 import lombok.Setter;
-
 import lombok.experimental.SuperBuilder;
  
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
 @Entity
 
 @Getter
@@ -45,15 +35,14 @@ public class DetalleVenta extends BaseEntity {
 
     private Double subtotal;
  
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "venta_id")
+    @JsonIgnoreProperties("detalles")
     private Venta venta;
  
     @ManyToOne
-
     @JoinColumn(name = "medicamento_id")
-
+    @JsonIgnoreProperties({"formulas", "laboratorio", "inventario"})
     private Medicamento medicamento;
 
 }

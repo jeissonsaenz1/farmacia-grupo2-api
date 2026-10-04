@@ -1,8 +1,11 @@
 package com.cesde.farmaciagrupo2.model.entity;
 
+import java.util.List;
+
 import com.cesde.farmaciagrupo2.model.base.BaseEntity;
- 
 import com.cesde.farmaciagrupo2.model.embeddable.Direccion;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -13,8 +16,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
- 
-import java.util.List;
  
 @Entity
 @Getter
@@ -32,5 +33,6 @@ public class Laboratorio extends BaseEntity {
     
     @JsonIgnore
     @OneToMany(mappedBy = "laboratorio")
+    @JsonIgnoreProperties("laboratorio")
     private List<Medicamento> medicamentos;
 }

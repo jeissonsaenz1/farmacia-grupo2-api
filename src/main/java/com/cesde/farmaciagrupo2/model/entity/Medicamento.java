@@ -26,7 +26,7 @@ import lombok.experimental.SuperBuilder;
  
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  
 @Entity
 
@@ -49,18 +49,16 @@ public class Medicamento extends BaseEntity {
     private Double precio;
  
     @ManyToOne
-
     @JoinColumn(name = "laboratorio_id")
-
+    @JsonIgnoreProperties("medicamentos")
     private Laboratorio laboratorio;
- 
 
-    @JsonIgnore
     @ManyToMany(mappedBy = "medicamentos")
+    @JsonIgnoreProperties("medicamentos")
     private Set<Formula> formulas;
 
-    @JsonIgnore
     @OneToOne(mappedBy = "medicamento")
+    @JsonIgnoreProperties("medicamento")
     private Inventario inventario;
 
 }

@@ -1,13 +1,12 @@
 package com.cesde.farmaciagrupo2.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.cesde.farmaciagrupo2.exception.RecursoNoEncontradoException;
 import com.cesde.farmaciagrupo2.model.entity.Formula;
 import com.cesde.farmaciagrupo2.repository.FormulaRepository;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @Service
 public class FormulaService {
@@ -28,19 +27,17 @@ public class FormulaService {
 
     public Formula buscarPorId(Long id) {
         return formulaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Fórmula no encontrada."
-                ));
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                "Fórmula no encontrada."
+        ));
     }
 
     public Formula actualizar(Long id, Formula formula) {
 
         Formula formulaExistente = formulaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Fórmula no encontrada."
-                ));
+            .orElseThrow(() -> new RecursoNoEncontradoException(
+                    "Fórmula no encontrada."
+            ));
 
         formulaExistente.setNombre(formula.getNombre());
         formulaExistente.setMedicamentos(formula.getMedicamentos());
@@ -51,8 +48,7 @@ public class FormulaService {
     public void eliminar(Long id) {
 
         if (!formulaRepository.existsById(id)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
+                    throw new RecursoNoEncontradoException(
                     "Fórmula no encontrada."
             );
         }

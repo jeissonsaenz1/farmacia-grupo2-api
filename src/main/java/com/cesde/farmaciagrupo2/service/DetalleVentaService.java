@@ -1,13 +1,12 @@
 package com.cesde.farmaciagrupo2.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.cesde.farmaciagrupo2.exception.RecursoNoEncontradoException;
 import com.cesde.farmaciagrupo2.model.entity.DetalleVenta;
 import com.cesde.farmaciagrupo2.repository.DetalleVentaRepository;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @Service
 public class DetalleVentaService {
@@ -28,19 +27,17 @@ public class DetalleVentaService {
 
     public DetalleVenta buscarPorId(Long id) {
         return detalleVentaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Detalle de venta no encontrado."
-                ));
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                "Detalle de venta no encontrado."
+        ));
     }
 
     public DetalleVenta actualizar(Long id, DetalleVenta detalleVenta) {
 
         DetalleVenta detalleExistente = detalleVentaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Detalle de venta no encontrado."
-                ));
+            .orElseThrow(() -> new RecursoNoEncontradoException(
+                    "Detalle de venta no encontrado."
+            ));
 
         detalleExistente.setCantidad(detalleVenta.getCantidad());
         detalleExistente.setSubtotal(detalleVenta.getSubtotal());
@@ -53,8 +50,7 @@ public class DetalleVentaService {
     public void eliminar(Long id) {
 
         if (!detalleVentaRepository.existsById(id)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
+            throw new RecursoNoEncontradoException(
                     "Detalle de venta no encontrado."
             );
         }

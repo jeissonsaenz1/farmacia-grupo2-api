@@ -3,9 +3,9 @@ package com.cesde.farmaciagrupo2.service;
 import com.cesde.farmaciagrupo2.model.entity.Laboratorio;
 import com.cesde.farmaciagrupo2.repository.LaboratorioRepository;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+
+import com.cesde.farmaciagrupo2.exception.RecursoNoEncontradoException;
 
 import java.util.List;
 
@@ -28,19 +28,17 @@ public class LaboratorioService {
 
     public Laboratorio buscarPorId(Long id) {
         return laboratorioRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Laboratorio no encontrado."
-                ));
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+        "Laboratorio no encontrado."
+        ));
     }
 
     public Laboratorio actualizar(Long id, Laboratorio laboratorio) {
 
         Laboratorio laboratorioExistente = laboratorioRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Laboratorio no encontrado."
-                ));
+        .orElseThrow(() -> new RecursoNoEncontradoException(
+                "Laboratorio no encontrado."
+        ));
 
         laboratorioExistente.setNombre(laboratorio.getNombre());
         laboratorioExistente.setDireccion(laboratorio.getDireccion());
@@ -51,8 +49,7 @@ public class LaboratorioService {
     public void eliminar(Long id) {
 
         if (!laboratorioRepository.existsById(id)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
+            throw new RecursoNoEncontradoException(
                     "Laboratorio no encontrado."
             );
         }

@@ -1,14 +1,13 @@
 package com.cesde.farmaciagrupo2.service;
 
-import com.cesde.farmaciagrupo2.model.entity.Medicamento;
-import com.cesde.farmaciagrupo2.repository.MedicamentoRepository;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
+import com.cesde.farmaciagrupo2.exception.RecursoNoEncontradoException;
+import com.cesde.farmaciagrupo2.exception.ReglaDeNegocioException;
+import com.cesde.farmaciagrupo2.model.entity.Medicamento;
+import com.cesde.farmaciagrupo2.repository.MedicamentoRepository;
 
 @Service
 public class MedicamentoService {
@@ -32,9 +31,12 @@ public class MedicamentoService {
         return medicamentoRepository.findAll();
     }
 
-    public Optional<Medicamento> buscarPorId(Long id) {
-        return medicamentoRepository.findById(id);
-    }
+    public Medicamento buscarPorId(Long id) {
+    return medicamentoRepository.findById(id)
+            .orElseThrow(() -> new RecursoNoEncontradoException(
+                    "Medicamento no encontrado."
+            ));
+}
 
     public List<Medicamento> buscarPorNombre(String nombre) {
         return medicamentoRepository.findByNombreContainingIgnoreCase(nombre);
@@ -56,11 +58,10 @@ public class MedicamentoService {
     public Medicamento actualizar(Long id, Medicamento medicamento) {
 
         Medicamento medicamentoExistente = medicamentoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Medicamento no encontrado."
-                ));
-
+        .orElseThrow(() -> new RecursoNoEncontradoException(
+                "Medicamento no encontrado."
+        ));
+        
         // Se mantiene la regla de negocio del precio
         validarPrecio(medicamento);
 
@@ -74,9 +75,8 @@ public class MedicamentoService {
     public void eliminar(Long id) {
 
         if (!medicamentoRepository.existsById(id)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Medicamento no encontrado."
+            throw new RecursoNoEncontradoException(
+        "Medicamento no encontrado."
             );
         }
 
@@ -86,8 +86,7 @@ public class MedicamentoService {
     private void validarPrecio(Medicamento medicamento) {
 
         if (medicamento.getPrecio() == null || medicamento.getPrecio() <= 0) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
+            throw new ReglaDeNegocioException(
                     "El precio del medicamento debe ser mayor que cero."
             );
         }

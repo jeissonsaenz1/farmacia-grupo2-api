@@ -1,14 +1,13 @@
 package com.cesde.farmaciagrupo2.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.cesde.farmaciagrupo2.exception.RecursoNoEncontradoException;
 import com.cesde.farmaciagrupo2.model.entity.Venta;
 import com.cesde.farmaciagrupo2.model.enums.EstadoVenta;
 import com.cesde.farmaciagrupo2.repository.VentaRepository;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @Service
 public class VentaService {
@@ -29,19 +28,17 @@ public class VentaService {
 
     public Venta buscarPorId(Long id) {
         return ventaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Venta no encontrada."
-                ));
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                "Venta no encontrada."
+        ));
     }
 
     public Venta actualizar(Long id, Venta venta) {
 
         Venta ventaExistente = ventaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Venta no encontrada."
-                ));
+            .orElseThrow(() -> new RecursoNoEncontradoException(
+                    "Venta no encontrada."
+            ));
 
         ventaExistente.setTotal(venta.getTotal());
         ventaExistente.setEstado(venta.getEstado());
@@ -52,8 +49,7 @@ public class VentaService {
     public void eliminar(Long id) {
 
         if (!ventaRepository.existsById(id)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
+            throw new RecursoNoEncontradoException(
                     "Venta no encontrada."
             );
         }

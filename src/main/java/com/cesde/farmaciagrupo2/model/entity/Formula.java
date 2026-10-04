@@ -1,19 +1,22 @@
 package com.cesde.farmaciagrupo2.model.entity;
 
-import com.cesde.farmaciagrupo2.model.base.BaseEntity;
- 
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
- 
-import java.util.Set;
+
+import com.cesde.farmaciagrupo2.model.base.BaseEntity;
  
 @Entity
 @Getter
@@ -32,5 +35,6 @@ public class Formula extends BaseEntity {
             joinColumns = @JoinColumn(name = "formula_id"),
             inverseJoinColumns = @JoinColumn(name = "medicamento_id")
     )
+    @JsonIgnoreProperties("formulas")
     private Set<Medicamento> medicamentos;
 }
