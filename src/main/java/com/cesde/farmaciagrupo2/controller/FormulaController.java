@@ -1,6 +1,7 @@
 package com.cesde.farmaciagrupo2.controller;
 
-import com.cesde.farmaciagrupo2.model.entity.Formula;
+import com.cesde.farmaciagrupo2.dto.FormulaRequestDTO;
+import com.cesde.farmaciagrupo2.dto.FormulaResponseDTO;
 import com.cesde.farmaciagrupo2.service.FormulaService;
 
 import org.springframework.http.HttpStatus;
@@ -20,35 +21,33 @@ public class FormulaController {
     }
 
     @PostMapping
-    public ResponseEntity<Formula> crear(
-            @RequestBody Formula formula) {
+    public ResponseEntity<FormulaResponseDTO> crear(
+            @RequestBody FormulaRequestDTO dto) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(formulaService.guardar(formula));
+                .body(formulaService.guardar(dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<Formula>> listar() {
+    public ResponseEntity<List<FormulaResponseDTO>> listar() {
         return ResponseEntity.ok(formulaService.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Formula> buscarPorId(
+    public ResponseEntity<FormulaResponseDTO> buscarPorId(
             @PathVariable Long id) {
 
-        return ResponseEntity.ok(
-                formulaService.buscarPorId(id)
-        );
+        return ResponseEntity.ok(formulaService.buscarPorId(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Formula> actualizar(
+    public ResponseEntity<FormulaResponseDTO> actualizar(
             @PathVariable Long id,
-            @RequestBody Formula formula) {
+            @RequestBody FormulaRequestDTO dto) {
 
         return ResponseEntity.ok(
-                formulaService.actualizar(id, formula)
+                formulaService.actualizar(id, dto)
         );
     }
 

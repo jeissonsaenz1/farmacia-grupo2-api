@@ -1,6 +1,7 @@
 package com.cesde.farmaciagrupo2.controller;
 
-import com.cesde.farmaciagrupo2.model.entity.Venta;
+import com.cesde.farmaciagrupo2.dto.VentaRequestDTO;
+import com.cesde.farmaciagrupo2.dto.VentaResponseDTO;
 import com.cesde.farmaciagrupo2.model.enums.EstadoVenta;
 import com.cesde.farmaciagrupo2.service.VentaService;
 
@@ -21,30 +22,28 @@ public class VentaController {
     }
 
     @PostMapping
-    public ResponseEntity<Venta> crear(
-            @RequestBody Venta venta) {
+    public ResponseEntity<VentaResponseDTO> crear(
+            @RequestBody VentaRequestDTO dto) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ventaService.guardar(venta));
+                .body(ventaService.guardar(dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<Venta>> listar() {
+    public ResponseEntity<List<VentaResponseDTO>> listar() {
         return ResponseEntity.ok(ventaService.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Venta> buscarPorId(
+    public ResponseEntity<VentaResponseDTO> buscarPorId(
             @PathVariable Long id) {
 
-        return ResponseEntity.ok(
-                ventaService.buscarPorId(id)
-        );
+        return ResponseEntity.ok(ventaService.buscarPorId(id));
     }
 
     @GetMapping("/estado")
-    public ResponseEntity<List<Venta>> buscarPorEstado(
+    public ResponseEntity<List<VentaResponseDTO>> buscarPorEstado(
             @RequestParam EstadoVenta estado) {
 
         return ResponseEntity.ok(
@@ -53,12 +52,12 @@ public class VentaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Venta> actualizar(
+    public ResponseEntity<VentaResponseDTO> actualizar(
             @PathVariable Long id,
-            @RequestBody Venta venta) {
+            @RequestBody VentaRequestDTO dto) {
 
         return ResponseEntity.ok(
-                ventaService.actualizar(id, venta)
+                ventaService.actualizar(id, dto)
         );
     }
 

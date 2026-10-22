@@ -1,6 +1,7 @@
 package com.cesde.farmaciagrupo2.controller;
 
-import com.cesde.farmaciagrupo2.model.entity.DetalleVenta;
+import com.cesde.farmaciagrupo2.dto.DetalleVentaRequestDTO;
+import com.cesde.farmaciagrupo2.dto.DetalleVentaResponseDTO;
 import com.cesde.farmaciagrupo2.service.DetalleVentaService;
 
 import org.springframework.http.HttpStatus;
@@ -15,26 +16,27 @@ public class DetalleVentaController {
 
     private final DetalleVentaService detalleVentaService;
 
-    public DetalleVentaController(DetalleVentaService detalleVentaService) {
+    public DetalleVentaController(
+            DetalleVentaService detalleVentaService) {
         this.detalleVentaService = detalleVentaService;
     }
 
     @PostMapping
-    public ResponseEntity<DetalleVenta> crear(
-            @RequestBody DetalleVenta detalleVenta) {
+    public ResponseEntity<DetalleVentaResponseDTO> crear(
+            @RequestBody DetalleVentaRequestDTO dto) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(detalleVentaService.guardar(detalleVenta));
+                .body(detalleVentaService.guardar(dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<DetalleVenta>> listar() {
+    public ResponseEntity<List<DetalleVentaResponseDTO>> listar() {
         return ResponseEntity.ok(detalleVentaService.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DetalleVenta> buscarPorId(
+    public ResponseEntity<DetalleVentaResponseDTO> buscarPorId(
             @PathVariable Long id) {
 
         return ResponseEntity.ok(
@@ -43,12 +45,12 @@ public class DetalleVentaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DetalleVenta> actualizar(
+    public ResponseEntity<DetalleVentaResponseDTO> actualizar(
             @PathVariable Long id,
-            @RequestBody DetalleVenta detalleVenta) {
+            @RequestBody DetalleVentaRequestDTO dto) {
 
         return ResponseEntity.ok(
-                detalleVentaService.actualizar(id, detalleVenta)
+                detalleVentaService.actualizar(id, dto)
         );
     }
 

@@ -3,13 +3,18 @@ package com.cesde.farmaciagrupo2.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.cesde.farmaciagrupo2.dto.VentaRequestDTO;
+import com.cesde.farmaciagrupo2.dto.VentaResponseDTO;
 import com.cesde.farmaciagrupo2.exception.RecursoNoEncontradoException;
+import com.cesde.farmaciagrupo2.exception.ReglaDeNegocioException;
 import com.cesde.farmaciagrupo2.model.entity.Venta;
 import com.cesde.farmaciagrupo2.model.enums.EstadoVenta;
 import com.cesde.farmaciagrupo2.repository.VentaRepository;
 
 @Service
+@Transactional
 public class VentaService {
 
     private final VentaRepository ventaRepository;
@@ -18,36 +23,61 @@ public class VentaService {
         this.ventaRepository = ventaRepository;
     }
 
-    public Venta guardar(Venta venta) {
-        return ventaRepository.save(venta);
+    public VentaResponseDTO guardar(VentaRequestDTO dto) {
+        validarDatos(dto);
+
+        Venta venta = new Venta();
+        venta.setTotal(dto.total());
+        venta.setEstado(dto.estado());
+
+        Venta guardada = ventaRepository.save(venta);
+
+        return convertirADTO(guardada);
     }
 
-    public List<Venta> listar() {
-        return ventaRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<VentaResponseDTO> listar() {
+        return ventaRepository.findAll()
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
     }
 
-    public Venta buscarPorId(Long id) {
-        return ventaRepository.findById(id)
+    @Transactional(readOnly = true)
+    public VentaResponseDTO buscarPorId(Long id) {
+        Venta venta = ventaRepository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException(
-                "Venta no encontrada."
-        ));
+                        "Venta no encontrada."
+                ));
+
+        return convertirADTO(venta);
     }
 
-    public Venta actualizar(Long id, Venta venta) {
+    public VentaResponseDTO actualizar(Long id, VentaRequestDTO dto) {
+        validarDatos(dto);
 
-        Venta ventaExistente = ventaRepository.findById(id)
-            .orElseThrow(() -> new RecursoNoEncontradoException(
-                    "Venta no encontrada."
-            ));
+        Venta existente = ventaRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                        "Venta no encontrada."
+                ));
 
-        ventaExistente.setTotal(venta.getTotal());
-        ventaExistente.setEstado(venta.getEstado());
+        existente.setTotal(dto.total());
+        existente.setEstado(dto.estado());
 
-        return ventaRepository.save(ventaExistente);
+        Venta actualizada = ventaRepository.save(existente);
+
+        return convertirADTO(actualizada);
+    }
+
+    @Transactional(readOnly = true)
+    public List<VentaResponseDTO> buscarPorEstado(EstadoVenta estado) {
+        return ventaRepository.findByEstado(estado)
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
     }
 
     public void eliminar(Long id) {
-
         if (!ventaRepository.existsById(id)) {
             throw new RecursoNoEncontradoException(
                     "Venta no encontrada."
@@ -57,7 +87,34 @@ public class VentaService {
         ventaRepository.deleteById(id);
     }
 
-    public List<Venta> buscarPorEstado(EstadoVenta estado) {
-        return ventaRepository.findByEstado(estado);
+    private void validarDatos(VentaRequestDTO dto) {
+        if (dto == null) {
+            throw new ReglaDeNegocioException(
+                    "Los datos de la venta son obligatorios."
+            );
+        }
+
+        if (dto.total() == null || dto.total() < 0) {
+            throw new ReglaDeNegocioException(
+                    "El total de la venta no puede ser negativo y es obligatorio."
+            );
+        }
+
+        if (dto.estado() == null) {
+            throw new ReglaDeNegocioException(
+                    "El estado de la venta es obligatorio."
+            );
+        }
+    }
+
+    private VentaResponseDTO convertirADTO(Venta venta) {
+        return new VentaResponseDTO(
+                venta.getId(),
+                venta.getTotal(),
+                venta.getEstado(),
+                venta.getFechaCreacion(),
+                venta.getFechaActualizacion(),
+                venta.getEstadoActivo()
+        );
     }
 }

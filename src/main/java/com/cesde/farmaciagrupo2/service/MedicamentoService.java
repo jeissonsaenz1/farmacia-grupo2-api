@@ -1,94 +1,180 @@
+
 package com.cesde.farmaciagrupo2.service;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.cesde.farmaciagrupo2.dto.MedicamentoRequestDTO;
+import com.cesde.farmaciagrupo2.dto.MedicamentoResponseDTO;
 import com.cesde.farmaciagrupo2.exception.RecursoNoEncontradoException;
 import com.cesde.farmaciagrupo2.exception.ReglaDeNegocioException;
+import com.cesde.farmaciagrupo2.model.entity.Laboratorio;
 import com.cesde.farmaciagrupo2.model.entity.Medicamento;
+import com.cesde.farmaciagrupo2.repository.LaboratorioRepository;
 import com.cesde.farmaciagrupo2.repository.MedicamentoRepository;
 
 @Service
+@Transactional
 public class MedicamentoService {
 
     private final MedicamentoRepository medicamentoRepository;
+    private final LaboratorioRepository laboratorioRepository;
 
-    public MedicamentoService(MedicamentoRepository medicamentoRepository) {
+    public MedicamentoService(
+            MedicamentoRepository medicamentoRepository,
+            LaboratorioRepository laboratorioRepository) {
         this.medicamentoRepository = medicamentoRepository;
+        this.laboratorioRepository = laboratorioRepository;
     }
 
-    public Medicamento guardar(Medicamento medicamento) {
+    public MedicamentoResponseDTO guardar(MedicamentoRequestDTO dto) {
+        validarDatos(dto);
 
-        // Regla de negocio 1:
-        // El precio debe ser mayor que cero.
-        validarPrecio(medicamento);
+        Laboratorio laboratorio = buscarLaboratorio(dto.laboratorioId());
 
-        return medicamentoRepository.save(medicamento);
+        Medicamento medicamento = new Medicamento();
+        medicamento.setNombre(dto.nombre().trim());
+        medicamento.setPrecio(dto.precio());
+        medicamento.setLaboratorio(laboratorio);
+
+        return convertirADTO(medicamentoRepository.save(medicamento));
     }
 
-    public List<Medicamento> listar() {
-        return medicamentoRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<MedicamentoResponseDTO> listar() {
+        return medicamentoRepository.findAll()
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
     }
 
-    public Medicamento buscarPorId(Long id) {
-    return medicamentoRepository.findById(id)
-            .orElseThrow(() -> new RecursoNoEncontradoException(
-                    "Medicamento no encontrado."
-            ));
-}
+    @Transactional(readOnly = true)
+    public MedicamentoResponseDTO buscarPorId(Long id) {
+        Medicamento medicamento = medicamentoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                        "Medicamento no encontrado."
+                ));
 
-    public List<Medicamento> buscarPorNombre(String nombre) {
-        return medicamentoRepository.findByNombreContainingIgnoreCase(nombre);
+        return convertirADTO(medicamento);
     }
 
-    public List<Medicamento> buscarPorLaboratorio(Long laboratorioId) {
-        return medicamentoRepository.findByLaboratorioId(laboratorioId);
+    @Transactional(readOnly = true)
+    public List<MedicamentoResponseDTO> buscarPorNombre(String nombre) {
+        return medicamentoRepository
+                .findByNombreContainingIgnoreCase(nombre)
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
     }
 
-    public List<Medicamento> buscarPorRangoPrecio(
+    @Transactional(readOnly = true)
+    public List<MedicamentoResponseDTO> buscarPorLaboratorio(
+            Long laboratorioId) {
+        return medicamentoRepository.findByLaboratorioId(laboratorioId)
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<MedicamentoResponseDTO> buscarPorRangoPrecio(
             Double precioMinimo,
             Double precioMaximo) {
 
+        if (precioMinimo == null || precioMaximo == null
+                || precioMinimo < 0
+                || precioMaximo < precioMinimo) {
+            throw new ReglaDeNegocioException(
+                    "El rango de precios no es válido."
+            );
+        }
+
         return medicamentoRepository.findByPrecioBetween(
-                precioMinimo,
-                precioMaximo);
+                        precioMinimo, precioMaximo)
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
     }
 
-    public Medicamento actualizar(Long id, Medicamento medicamento) {
+    public MedicamentoResponseDTO actualizar(
+            Long id,
+            MedicamentoRequestDTO dto) {
 
-        Medicamento medicamentoExistente = medicamentoRepository.findById(id)
-        .orElseThrow(() -> new RecursoNoEncontradoException(
-                "Medicamento no encontrado."
-        ));
-        
-        // Se mantiene la regla de negocio del precio
-        validarPrecio(medicamento);
+        validarDatos(dto);
 
-        medicamentoExistente.setNombre(medicamento.getNombre());
-        medicamentoExistente.setPrecio(medicamento.getPrecio());
-        medicamentoExistente.setLaboratorio(medicamento.getLaboratorio());
+        Medicamento existente = medicamentoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                        "Medicamento no encontrado."
+                ));
 
-        return medicamentoRepository.save(medicamentoExistente);
+        Laboratorio laboratorio = buscarLaboratorio(dto.laboratorioId());
+
+        existente.setNombre(dto.nombre().trim());
+        existente.setPrecio(dto.precio());
+        existente.setLaboratorio(laboratorio);
+
+        return convertirADTO(medicamentoRepository.save(existente));
     }
 
     public void eliminar(Long id) {
-
         if (!medicamentoRepository.existsById(id)) {
             throw new RecursoNoEncontradoException(
-        "Medicamento no encontrado."
+                    "Medicamento no encontrado."
             );
         }
 
         medicamentoRepository.deleteById(id);
     }
 
-    private void validarPrecio(Medicamento medicamento) {
+    private void validarDatos(MedicamentoRequestDTO dto) {
+        if (dto == null) {
+            throw new ReglaDeNegocioException(
+                    "Los datos del medicamento son obligatorios."
+            );
+        }
 
-        if (medicamento.getPrecio() == null || medicamento.getPrecio() <= 0) {
+        if (dto.nombre() == null || dto.nombre().isBlank()) {
+            throw new ReglaDeNegocioException(
+                    "El nombre del medicamento es obligatorio."
+            );
+        }
+
+        if (dto.precio() == null || dto.precio() <= 0) {
             throw new ReglaDeNegocioException(
                     "El precio del medicamento debe ser mayor que cero."
             );
         }
+
+        if (dto.laboratorioId() == null) {
+            throw new ReglaDeNegocioException(
+                    "El laboratorio es obligatorio."
+            );
+        }
+    }
+
+    private Laboratorio buscarLaboratorio(Long laboratorioId) {
+        return laboratorioRepository.findById(laboratorioId)
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                        "Laboratorio no encontrado."
+                ));
+    }
+
+    private MedicamentoResponseDTO convertirADTO(
+            Medicamento medicamento) {
+
+        Laboratorio laboratorio = medicamento.getLaboratorio();
+
+        return new MedicamentoResponseDTO(
+                medicamento.getId(),
+                medicamento.getNombre(),
+                medicamento.getPrecio(),
+                laboratorio != null ? laboratorio.getId() : null,
+                laboratorio != null ? laboratorio.getNombre() : null,
+                medicamento.getFechaCreacion(),
+                medicamento.getFechaActualizacion(),
+                medicamento.getEstadoActivo()
+        );
     }
 }

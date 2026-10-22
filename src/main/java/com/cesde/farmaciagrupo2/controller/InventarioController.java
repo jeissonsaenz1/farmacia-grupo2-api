@@ -1,6 +1,7 @@
 package com.cesde.farmaciagrupo2.controller;
 
-import com.cesde.farmaciagrupo2.model.entity.Inventario;
+import com.cesde.farmaciagrupo2.dto.InventarioRequestDTO;
+import com.cesde.farmaciagrupo2.dto.InventarioResponseDTO;
 import com.cesde.farmaciagrupo2.service.InventarioService;
 
 import org.springframework.http.HttpStatus;
@@ -20,21 +21,21 @@ public class InventarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Inventario> crear(
-            @RequestBody Inventario inventario) {
+    public ResponseEntity<InventarioResponseDTO> crear(
+            @RequestBody InventarioRequestDTO dto) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(inventarioService.guardar(inventario));
+                .body(inventarioService.guardar(dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<Inventario>> listar() {
+    public ResponseEntity<List<InventarioResponseDTO>> listar() {
         return ResponseEntity.ok(inventarioService.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Inventario> buscarPorId(
+    public ResponseEntity<InventarioResponseDTO> buscarPorId(
             @PathVariable Long id) {
 
         return inventarioService.buscarPorId(id)
@@ -43,7 +44,7 @@ public class InventarioController {
     }
 
     @GetMapping("/medicamento/{medicamentoId}")
-    public ResponseEntity<Inventario> buscarPorMedicamento(
+    public ResponseEntity<InventarioResponseDTO> buscarPorMedicamento(
             @PathVariable Long medicamentoId) {
 
         return inventarioService.buscarPorMedicamento(medicamentoId)
@@ -52,12 +53,12 @@ public class InventarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Inventario> actualizar(
+    public ResponseEntity<InventarioResponseDTO> actualizar(
             @PathVariable Long id,
-            @RequestBody Inventario inventario) {
+            @RequestBody InventarioRequestDTO dto) {
 
         return ResponseEntity.ok(
-                inventarioService.actualizar(id, inventario)
+                inventarioService.actualizar(id, dto)
         );
     }
 
