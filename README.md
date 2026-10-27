@@ -6,7 +6,7 @@ El proyecto permite administrar medicamentos, laboratorios, inventarios, fórmul
 
 ## Tecnologías utilizadas
 
-* Java
+* Java 21 (LTS)
 * Spring Boot
 * Spring Data JPA
 * PostgreSQL

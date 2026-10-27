@@ -1,0 +1,19 @@
+
+# Archivos generados por Maven
+target/
+
+# Historial y configuración de Git
+.git/
+.gitignore
+
+# Variables de entorno y secretos
+.env
+.env.*
+!.env.template
+
+# Documentación Markdown
+*.md
+
+# Archivos locales del editor
+.vscode/
+.idea/
