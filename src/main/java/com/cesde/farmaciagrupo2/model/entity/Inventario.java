@@ -12,8 +12,10 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "inventario")
 @Getter
 @Setter
 @NoArgsConstructor

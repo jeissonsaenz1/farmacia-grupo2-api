@@ -17,8 +17,10 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import com.cesde.farmaciagrupo2.model.base.BaseEntity;
+import jakarta.persistence.Table;
  
 @Entity
+@Table(name = "formula")
 @Getter
 @Setter
 @NoArgsConstructor

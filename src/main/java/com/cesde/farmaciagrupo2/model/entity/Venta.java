@@ -16,8 +16,10 @@ import java.util.List;
 import com.cesde.farmaciagrupo2.model.base.BaseEntity;
 import com.cesde.farmaciagrupo2.model.enums.EstadoVenta;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Table;
  
 @Entity
+@Table(name = "venta")
 @Getter
 @Setter
 @NoArgsConstructor

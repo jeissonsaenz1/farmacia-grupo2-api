@@ -12,9 +12,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import jakarta.persistence.Table;
  
 @Entity
-
+@Table(name = "detalle_venta")
 @Getter
 
 @Setter

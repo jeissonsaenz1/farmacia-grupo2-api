@@ -16,8 +16,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Table;
  
 @Entity
+@Table(name = "laboratorio")
 @Getter
 @Setter
 @NoArgsConstructor

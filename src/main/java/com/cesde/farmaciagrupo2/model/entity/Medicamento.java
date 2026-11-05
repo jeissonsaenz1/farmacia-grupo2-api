@@ -27,8 +27,10 @@ import lombok.experimental.SuperBuilder;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Table;
  
 @Entity
+@Table(name = "medicamento")
 
 @Getter
 
